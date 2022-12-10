@@ -14,10 +14,23 @@ int main(){
 
 
     parseData(system);
-    system.printAllRoutes();
-    //system.printRoute("BOS");
+    
+    list<flight_t> aFlightPath;     //one augmenting path
 
+    // system.BFSearch(aFlightPath);
 
+    // for(auto itr = aFlightPath.begin(); itr != aFlightPath.end(); ++itr){
+    //     system.printFlight_t(*itr);
+    // }
+
+    // system.BFSearch(aFlightPath);
+
+    // for(auto itr = aFlightPath.begin(); itr != aFlightPath.end(); ++itr){
+    //     system.printFlight_t(*itr);
+    // }
+
+    int finalFlow = system.findMaxFlow();
+    cout << "Max flow: " << finalFlow << endl;
 
     return 0;
 }

@@ -27,9 +27,12 @@ class NAS{
     public:
         NAS();
         void addFlight(string, flight_t&);  //adds flight to allFlights
+        void printFlight_t(flight_t&);
         void printRoute(string);
         void printAllRoutes();
-        void BFSearch();       //breadth first search
+        bool getFirstFlightTo(string,string,list<flight_t>&,int&);      //returns first flight in allFlights that goes from source to dest parameters
+        bool BFSearch(list<flight_t>&);       //breadth first search
+        int findMaxFlow();      //ford fulkerson algo
         ~NAS() {};
 
 };
