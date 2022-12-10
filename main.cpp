@@ -10,34 +10,22 @@ bool isValidAirport(string);
 
 int main(){
 
-    NAS system;
-
-
-    parseData(system);
+    NAS system;             //contains the adjacency list, BFS algo, and FordFulkerson algo
+    parseData(system);      //parses flights.txt file
     
-    list<flight_t> aFlightPath;     //one augmenting path
+    //system.printAllRoutes();
 
-    // system.BFSearch(aFlightPath);
-
-    // for(auto itr = aFlightPath.begin(); itr != aFlightPath.end(); ++itr){
-    //     system.printFlight_t(*itr);
-    // }
-
-    // system.BFSearch(aFlightPath);
-
-    // for(auto itr = aFlightPath.begin(); itr != aFlightPath.end(); ++itr){
-    //     system.printFlight_t(*itr);
-    // }
-
-    int finalFlow = system.findMaxFlow();
-    cout << "Max flow: " << finalFlow << endl;
+    int finalFlow = system.findMaxFlow();           //ford-fulkerson algorithm
+    cout <<"\n\n\nMax flow: " << finalFlow << endl;
 
     return 0;
 }
 
 void parseData(NAS& system){
 
-    regex reg("\\s+");
+    //parses the flights.txt dataset using regex
+
+    regex reg("\\s+");      //the regex
     string line;
 
     ifstream inputfile;
@@ -45,24 +33,28 @@ void parseData(NAS& system){
 
     if(inputfile.is_open()){
         while(getline(inputfile,line)){
+            //for each line in the file, split using the regex. result of splitting a line => itr
             sregex_token_iterator itr(line.begin(),line.end(),reg,-1);
             sregex_token_iterator end;
 
             //only adds flight if the airport is part of the list of valid airports           
             if(isValidAirport(*itr) && isValidAirport(*next(itr,1))){
-                flight_t aflight;
-                // cout << "\"" << *itr << "\", "; 
-                aflight.source = *itr;
-                ++itr;
-                aflight.dest = *itr;
-                ++itr;
-                aflight.startTime = stoi(*itr);
-                ++itr;
-                aflight.endTime = stoi(*itr);
-                ++itr;
-                aflight.capacity = stoi(*itr);
 
-                system.addFlight(aflight.source, aflight);
+                //see NAS.hpp for flight_t struct
+                flight_t* aflight = new flight_t();
+                
+                (*aflight).source = *itr;
+                ++itr;
+                (*aflight).dest = *itr;
+                ++itr;
+                (*aflight).startTime = stoi(*itr);
+                ++itr;
+                (*aflight).endTime = stoi(*itr);
+                ++itr;
+                (*aflight).capacity = stoi(*itr);
+
+                //adds flight_t to the NAS
+                system.addFlight((*aflight).source, *aflight);
 
             }            
         }
