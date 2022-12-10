@@ -1,39 +1,31 @@
-#include <iostream>
 #include <fstream>
-#include <string>
 #include <regex>
 #include <vector>
-using namespace std;
+#include <iterator>
+#include "NAS.hpp"
 
-struct flight_t {
-    string source;
-    string dest;
-    int startTime;
-    int endTime;
-    int capacity;
-};
 
-void parseData(vector<flight_t> &);
-void printFlight(flight_t &);
-void printFlights(vector<flight_t> &);
+void parseData(NAS&);
+bool isValidAirport(string);
 
 int main(){
-    vector<flight_t> flights;
 
-    parseData(flights);
-    printFlights(flights);
+    NAS system;
 
-    
+
+    parseData(system);
+    system.printAllRoutes();
+    //system.printRoute("BOS");
+
+
 
     return 0;
 }
 
-void parseData(vector<flight_t>& flights){
+void parseData(NAS& system){
 
     regex reg("\\s+");
     string line;
-    int linecount = 0;
-
 
     ifstream inputfile;
     inputfile.open("flights.txt");
@@ -42,34 +34,32 @@ void parseData(vector<flight_t>& flights){
         while(getline(inputfile,line)){
             sregex_token_iterator itr(line.begin(),line.end(),reg,-1);
             sregex_token_iterator end;
-            
-            flight_t aflight;
-            // cout << "\"" << *itr << "\", "; 
-            aflight.source = *itr;
-            ++itr;
-            aflight.dest = *itr;
-            ++itr;
-            aflight.startTime = stoi(*itr);
-            ++itr;
-            aflight.endTime = stoi(*itr);
-            ++itr;
-            aflight.capacity = stoi(*itr);
 
-            //printFlight(aflight);
-            flights.push_back(aflight);
+            //only adds flight if the airport is part of the list of valid airports           
+            if(isValidAirport(*itr) && isValidAirport(*next(itr,1))){
+                flight_t aflight;
+                // cout << "\"" << *itr << "\", "; 
+                aflight.source = *itr;
+                ++itr;
+                aflight.dest = *itr;
+                ++itr;
+                aflight.startTime = stoi(*itr);
+                ++itr;
+                aflight.endTime = stoi(*itr);
+                ++itr;
+                aflight.capacity = stoi(*itr);
+
+                system.addFlight(aflight.source, aflight);
+
+            }            
         }
         inputfile.close();
     }
 }
-void printFlight(flight_t& aflight){
-    cout << aflight.source << ", "
-            << aflight.dest << ", "
-            << aflight.startTime << ", "
-            << aflight.endTime << ", "
-            << aflight.capacity << endl;
-}
-void printFlights(vector<flight_t>& theflights){
-    for(vector<flight_t>::iterator itr = theflights.begin(); itr != theflights.end(); ++itr ){
-        printFlight(*itr);
+bool isValidAirport(string airport){
+    
+    for(int i = 0; i < sizeof(airportsUsed)/sizeof(airportsUsed[0]); i++){
+       if(airportsUsed[i] == airport) return true;
     }
+    return false;
 }
